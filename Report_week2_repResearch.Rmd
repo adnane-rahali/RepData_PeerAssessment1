@@ -1,9 +1,8 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
+title: "Report"
 author: "Adnane Rahali"
-output: 
-  html_document:
-    keep_md: true
+date: "8/22/2021"
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -15,15 +14,12 @@ First, we load and process the data and the necessary libraries.
 library(dplyr)
 library(ggplot2)
 library(lattice)
-```
 
-## Loading and preprocessing the data
-```{r}
 dt <-read.csv("./activity/activity.csv")
 ```
 
+## What is the mean total number of steps per day?
 
-## What is mean total number of steps taken per day?
 1. Calculate the total number of steps taken per day?
 ```{r}
 proc_data <- dt %>%
@@ -47,7 +43,6 @@ mean_and_median <- proc_data %>%
 cat("mean:  ", mean_and_median$mean, "\n", "median:  ", mean_and_median$median)
 ```
 
-
 ## What is the average daily activity pattern?
 
 1. Make a time series plot of the 5min intervals and the avg number of steps taken.
@@ -69,14 +64,14 @@ steps_plot
 steps_per_interv$interval[steps_per_interv$average == max(steps_per_interv$average)]
 ```
 
-## Imputing missing values
+## Inputting missing values
 
 1. The total number of rows with NAs
 ```{r}
 sum(apply(dt, 1, anyNA))
 ```
 
-2. Devise a strategy for filling in all of the missing values in the dataset.  
+2. Devise a strategy for filling in all of the missing values in the dataset. 
 The missing data will be replaced by the rounded value of the mean for that day using the following function::
 ```{r}
 replaceNa <- function(i){
@@ -124,7 +119,7 @@ mean_and_median2$mean != mean_and_median$mean
 mean_and_median2$median != mean_and_median$median
 ```
 
-- What is the impact of inputting missing data?  
+- What is the impact of inputting missing data?
 Replacing the missing data changes the mean and the median of the data.
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -153,3 +148,4 @@ attach(steps_per_interv_per_day)
 xyplot(average~interval|day.f, type='l', layout=c(1, 2),
        ylab="avg  number  of  steps  taken", xlab="5min  intervals")
 ```
+
