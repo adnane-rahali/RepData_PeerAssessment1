@@ -38,20 +38,48 @@ sum(apply(dt, 1, anyNA))
 
 replaceNa <- function(i){
         if (is.na(i["steps"])){
-                temp <- steps_per_interv$average[steps_per_interv$interval==i["interval"]]
-                #i["steps"]<-temp[1]
-                print(temp[1])
+                temp <- steps_per_interv$average[steps_per_interv$interval==as.numeric(i["interval"])]
+                i["steps"]<- round(as.numeric(temp))
         }
         else{
-                i["steps"] = i["steps"]
+                i["steps"] = as.numeric(i["steps"])
         }
 }
 
-dt$steps <- apply(dt, 1, replaceNa)
 
-tst <- dt[1:10, ]
-tst$steps <- apply(tst, 1, replaceNa)
+dt <-read.csv("./activity/activity.csv")
+
+new_data <- data.frame(dt)
+new_data$steps <- apply(new_data, 1, replaceNa)
+
+proc_data2 <- new_data %>%
+        group_by(date) %>%
+        summarise(total = sum(steps))
+
+hist_steps2 <- ggplot(proc_data2, aes(total)) + 
+        geom_histogram(bins=20)
+hist_steps2
+
+str(new_data)
+
+new_data <- new_data %>%
+        mutate(day = ifelse(weekdays(as.Date(date, "%Y-%m-%d")) %in% 
+                                    c("Sunday","Saturday"),"weekend","weekday")) %>%
+        mutate(day = as.factor(day))
+
+library(lattice)
+attach(steps_per_interv_per_day)
+
+steps_per_interv_per_day <- new_data %>%
+        group_by(day, interval) %>%
+        summarise(average=mean(steps, na.rm=TRUE))
 
 
-iii <= tst[1, ]
-steps_per_interv$average[steps_per_interv$interval==i["interval"]]
+day.f<-factor(steps_per_interv_per_day$day,levels=c("weekend", "weekday"),
+              labels=c("weekend", "weekday"))
+
+xyplot(average~interval|day.f, type='l', layout=c(1, 2),
+       ylab="avg  number  of  steps  taken", xlab="5min  intervals")
+
+
+
